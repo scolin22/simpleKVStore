@@ -8,15 +8,14 @@ import java.util.logging.Logger;
 /**
  * Created by colin on 2016-01-17.
  */
-public class WorkerThread implements Runnable {
-    private static Logger log = Logger.getLogger(WorkerThread.class.getName());
-
+public class WorkerRunnable implements Runnable {
+    private static Logger log = Logger.getLogger(WorkerRunnable.class.getName());
 
     ApplicationLayer al;
     DataStore ds;
     Request r;
 
-    public WorkerThread(Request r, ApplicationLayer al, DataStore ds) {
+    public WorkerRunnable(Request r, ApplicationLayer al, DataStore ds) {
         log.setLevel(Level.OFF);
 
         this.r = r;

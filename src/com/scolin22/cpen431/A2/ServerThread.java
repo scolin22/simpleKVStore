@@ -2,6 +2,8 @@ package com.scolin22.cpen431.A2;
 
 import com.scolin22.cpen431.utils.StringUtils;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +16,7 @@ public class ServerThread extends Thread {
     ApplicationLayer al;
     WorkQueue wq;
     DataStore ds;
+    ExecutorService threadPool = Executors.newFixedThreadPool(20);
 
     private volatile boolean running = true;
 
@@ -36,7 +39,8 @@ public class ServerThread extends Thread {
             Request r = (Request) wq.nextRequest();
             if (r == null) continue;
             log.info("PROCESD request, UID: " + StringUtils.byteArrayToHexString(r.UID));
-            new Thread(new WorkerThread(r, al, ds)).start();
+
+            threadPool.execute(new WorkerRunnable(r, al, ds));
         }
     }
 }
