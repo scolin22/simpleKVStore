@@ -1,5 +1,6 @@
 package com.scolin22.cpen431.A2;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ListenerThread extends Thread {
@@ -11,6 +12,8 @@ public class ListenerThread extends Thread {
     private volatile boolean running = true;
 
     public ListenerThread(ApplicationLayer al, WorkQueue wq) {
+        log.setLevel(Level.OFF);
+
         this.al = al;
         this.wq = wq;
     }

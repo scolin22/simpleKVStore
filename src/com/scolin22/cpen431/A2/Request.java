@@ -5,6 +5,7 @@ import com.scolin22.cpen431.utils.StringUtils;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -25,6 +26,8 @@ public class Request {
     private byte[] key = new byte[KEY_LENGTH];
 
     public Request(ByteBuffer inBuf, InetAddress remoteIP, int remotePort) {
+        log.setLevel(Level.OFF);
+
         this.remoteIP = remoteIP;
         this.remotePort = remotePort;
 

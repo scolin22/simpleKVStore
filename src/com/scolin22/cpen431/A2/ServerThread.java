@@ -2,6 +2,7 @@ package com.scolin22.cpen431.A2;
 
 import com.scolin22.cpen431.utils.StringUtils;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -17,6 +18,8 @@ public class ServerThread extends Thread {
     private volatile boolean running = true;
 
     public ServerThread(ApplicationLayer al, WorkQueue wq, DataStore ds) {
+        log.setLevel(Level.OFF);
+
         this.al = al;
         this.ds = ds;
         this.wq = wq;

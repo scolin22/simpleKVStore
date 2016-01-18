@@ -2,6 +2,7 @@ package com.scolin22.cpen431.A2;
 
 import com.scolin22.cpen431.utils.StringUtils;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,6 +17,8 @@ public class WorkerThread implements Runnable {
     Request r;
 
     public WorkerThread(Request r, ApplicationLayer al, DataStore ds) {
+        log.setLevel(Level.OFF);
+
         this.r = r;
         this.al = al;
         this.ds = ds;

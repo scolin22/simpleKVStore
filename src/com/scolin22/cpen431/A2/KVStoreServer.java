@@ -1,6 +1,12 @@
 package com.scolin22.cpen431.A2;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class KVStoreServer {
+    private static Logger log = Logger.getLogger(KVStoreServer.class.getName());
+
+
     ApplicationLayer al;
     ListenerThread lt;
     ServerThread st;
@@ -9,6 +15,8 @@ public class KVStoreServer {
     DataStore ds;
 
     public KVStoreServer() {
+        log.setLevel(Level.OFF);
+
         wq = new WorkQueue();
         ds = new DataStore();
 

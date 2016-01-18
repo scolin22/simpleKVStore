@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataStore {
-    final static int CAPACITY = 100;
+    final static int CAPACITY = 100000;
     ConcurrentHashMap<ByteBuffer, byte[]> ds;
 
     public DataStore() {

@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
  * Created by colin on 2016-01-17.
  */
 public class WorkQueue {
-    final static int QUEUE_CAPACITY = 16;
     final static int TIMEOUT = 1;
 
     ConcurrentHashMap<byte[], BlockingQueue> workQueue;
@@ -22,7 +21,7 @@ public class WorkQueue {
         BlockingQueue queue = workQueue.get(r.UID);
         try {
             if (queue == null) {
-                queue = new LinkedBlockingQueue<Request>(QUEUE_CAPACITY);
+                queue = new LinkedBlockingQueue<Request>();
                 workQueue.put(r.UID, queue);
             }
             //TODO: offer
