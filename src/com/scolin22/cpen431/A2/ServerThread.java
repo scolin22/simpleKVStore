@@ -16,13 +16,14 @@ public class ServerThread extends Thread {
     ApplicationLayer al;
     WorkQueue wq;
     DataStore ds;
-    ExecutorService threadPool = Executors.newFixedThreadPool(20);
+    ExecutorService threadPool;
 
     private volatile boolean running = true;
 
     public ServerThread(ApplicationLayer al, WorkQueue wq, DataStore ds) {
         log.setLevel(Level.OFF);
 
+        this.threadPool = Executors.newCachedThreadPool();
         this.al = al;
         this.ds = ds;
         this.wq = wq;

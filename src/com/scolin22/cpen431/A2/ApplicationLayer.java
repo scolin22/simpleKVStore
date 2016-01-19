@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
 public class ApplicationLayer {
-    final static int MAX_PAYLOAD_SIZE = 10035; //TODO: see if we can be flexible about the capacity
+    final static int MAX_PAYLOAD_SIZE = 10000 + 35; //TODO: see if we can be flexible about the capacity
     final static int SOCKET_TIMEOUT = 100;
 
     private static Logger log = Logger.getLogger(ApplicationLayer.class.getName());
