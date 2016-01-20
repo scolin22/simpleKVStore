@@ -36,7 +36,7 @@ public class WorkQueue {
         for (byte[] key : workQueue.keySet()) {
             if (!workQueue.get(key).isEmpty()) {
                 try {
-                    return workQueue.get(key).poll(TIMEOUT, TimeUnit.MILLISECONDS);
+                    return workQueue.get(key).take();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
