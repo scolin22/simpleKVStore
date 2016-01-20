@@ -14,13 +14,13 @@ public class KVStoreServer {
     WorkQueue wq;
     DataStore ds;
 
-    public KVStoreServer() {
+    public KVStoreServer(int port) {
         log.setLevel(Level.OFF);
 
         wq = new WorkQueue();
         ds = new DataStore();
 
-        al = new ApplicationLayer(this);
+        al = new ApplicationLayer(this, port);
         lt = new ListenerThread(al, wq);
         st = new ServerThread(al, wq, ds);
     }

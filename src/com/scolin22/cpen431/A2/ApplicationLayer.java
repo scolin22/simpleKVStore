@@ -16,10 +16,10 @@ public class ApplicationLayer {
     DatagramSocket socket;
     KVStoreServer server;
 
-    public ApplicationLayer(KVStoreServer server) {
+    public ApplicationLayer(KVStoreServer server, int port) {
         try {
             this.server = server;
-            socket = new DatagramSocket(53458);
+            socket = new DatagramSocket(port);
             socket.setSoTimeout(SOCKET_TIMEOUT);
             log.info("Socket running on: " + socket.getLocalAddress() + ", port: " + socket.getLocalPort());
         } catch (SocketException e) {
