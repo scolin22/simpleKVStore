@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import java.util.logging.Logger;
 
 public class ApplicationLayer {
-    final static int MAX_PAYLOAD_SIZE = 10000 + 35; //TODO: see if we can be flexible about the capacity
+    final static int MAX_PAYLOAD_SIZE = 10000 + 35 + 16; //TODO: see if we can be flexible about the capacity
     final static int SOCKET_TIMEOUT = 100;
 
     private static Logger log = Logger.getLogger(ApplicationLayer.class.getName());
@@ -20,7 +20,7 @@ public class ApplicationLayer {
         try {
             this.server = server;
             socket = new DatagramSocket(port);
-            socket.setSoTimeout(SOCKET_TIMEOUT);
+//            socket.setSoTimeout(SOCKET_TIMEOUT);
             log.info("Socket running on: " + socket.getLocalAddress() + ", port: " + socket.getLocalPort());
         } catch (SocketException e) {
             e.printStackTrace();
@@ -49,8 +49,8 @@ public class ApplicationLayer {
         try {
             socket.receive(inPacket);
             return new Request(inBuf, inPacket.getAddress(), inPacket.getPort());
-        } catch (InterruptedIOException e) {
-            return null;
+//        } catch (InterruptedIOException e) {
+//            return null;
         } catch (IOException e) {
             e.printStackTrace();
         }
