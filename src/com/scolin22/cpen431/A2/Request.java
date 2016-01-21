@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class Request {
     final static int UNIQUE_ID_LENGTH = 16;
     final static int KEY_LENGTH = 32;
-    final static int MAX_VAL_LENGTH = 10 * 1000;
+    final static int MAX_VAL_LENGTH = 10000;
     private static Logger log = Logger.getLogger(Request.class.getName());
     RequestType reqType;
     ReplyType repType;

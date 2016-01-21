@@ -20,7 +20,7 @@ public class DataStore {
         double heapFreeSize = Runtime.getRuntime().freeMemory();
         double heapMaxSize = Runtime.getRuntime().maxMemory();
 
-        if (heapFreeSize / heapMaxSize < 0.1 || ds.size() >= CAPACITY) {
+        if ((heapFreeSize / heapMaxSize) < 0.1 || ds.size() >= CAPACITY) {
             log.info("Exceeded heap limit Free: " + heapFreeSize + " Max: " + heapMaxSize);
             r.repType = Request.ReplyType.NO_SPACE;
         } else if (r.length < 0 || r.length > Request.MAX_VAL_LENGTH) {
