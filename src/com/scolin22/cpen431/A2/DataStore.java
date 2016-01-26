@@ -1,35 +1,55 @@
 package com.scolin22.cpen431.A2;
 
 import java.nio.ByteBuffer;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DataStore {
-    final static int CAPACITY = 100000;
+    final static int STORE_CAPACITY = 100000;
+    final static int INIT_CAPACITY = 5000;
+    final static int CACHE_CAPACITY = 100;
     private static Logger log = Logger.getLogger(DataStore.class.getName());
     ConcurrentHashMap<ByteBuffer, byte[]> ds;
+    Map cache;
 
     public DataStore() {
         log.setLevel(Level.INFO);
 
-        this.ds = new ConcurrentHashMap<ByteBuffer, byte[]>();
+        this.ds = new ConcurrentHashMap<ByteBuffer, byte[]>(INIT_CAPACITY);
+        this.cache = Collections.synchronizedMap(new LRUCache(CACHE_CAPACITY));
     }
 
     public void put(Request r) {
         double heapFreeSize = Runtime.getRuntime().freeMemory();
         double heapMaxSize = Runtime.getRuntime().maxMemory();
 
-        if ((heapFreeSize / heapMaxSize) < 0.15 || ds.size() >= CAPACITY) {
+        Request cachedRequest = (Request) cache.get(r.getUID());
+        if (cachedRequest != null) {
+            r.copyRequest(cachedRequest);
+            return;
+        }
+
+        if ((heapFreeSize / heapMaxSize) < 0.15 || ds.size() >= STORE_CAPACITY) {
             log.info("Exceeded heap limit Free: " + heapFreeSize + " Max: " + heapMaxSize);
             r.repType = Request.ReplyType.NO_SPACE;
         } else {
             ds.put(r.getKey(), r.value);
             r.repType = Request.ReplyType.OP_SUCCESS;
         }
+
+        cache.put(r.getUID(), r);
     }
 
     public void get(Request r) {
+        Request cachedRequest = (Request) cache.get(r.getUID());
+        if (cachedRequest != null) {
+            r.copyRequest(cachedRequest);
+            return;
+        }
+
         if (!ds.containsKey(r.getKey())) {
             r.repType = Request.ReplyType.INVALID_KEY;
         } else {
@@ -38,15 +58,25 @@ public class DataStore {
             r.value = store;
             r.repType = Request.ReplyType.OP_SUCCESS;
         }
+
+        cache.put(r.getUID(), r);
     }
 
     public void remove(Request r) {
+        Request cachedRequest = (Request) cache.get(r.getUID());
+        if (cachedRequest != null) {
+            r.copyRequest(cachedRequest);
+            return;
+        }
+
         if (!ds.containsKey(r.getKey())) {
             r.repType = Request.ReplyType.INVALID_KEY;
         } else {
             ds.remove(r.getKey());
             r.repType = Request.ReplyType.OP_SUCCESS;
         }
+
+        cache.put(r.getUID(), r);
     }
 
     public void delete_all(Request r) {

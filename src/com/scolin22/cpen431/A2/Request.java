@@ -55,6 +55,15 @@ public class Request {
         log.info("CREATED request, UID: " + StringUtils.byteArrayToHexString(UID) + " command: " + reqType.getByteCode());
     }
 
+    public void copyRequest(Request request) {
+        this.repType = request.repType;
+
+        if (this.reqType == RequestType.GET) {
+            this.length = request.length;
+            this.value = request.value;
+        }
+    }
+
     public void setReply(ByteBuffer outBuf) {
         outBuf.order(ByteOrder.LITTLE_ENDIAN);
         outBuf.put(UID);
@@ -68,6 +77,10 @@ public class Request {
 
     public ByteBuffer getKey() {
         return ByteBuffer.wrap(key);
+    }
+
+    public ByteBuffer getUID() {
+        return ByteBuffer.wrap(UID);
     }
 
     private void setKey(ByteBuffer inBuf) {
