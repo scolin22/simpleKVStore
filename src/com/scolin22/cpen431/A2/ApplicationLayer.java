@@ -45,7 +45,7 @@ public class ApplicationLayer {
         DatagramPacket inPacket = new DatagramPacket(inBuf.array(), MAX_PAYLOAD_SIZE);
         try {
             socket.receive(inPacket);
-            return new Request(inBuf, inPacket.getAddress(), inPacket.getPort());
+            return new Request(inBuf, inPacket.getAddress(), inPacket.getPort(), inPacket.getLength());
         } catch (IOException e) {
             e.printStackTrace();
         }

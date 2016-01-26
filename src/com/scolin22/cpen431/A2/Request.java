@@ -15,6 +15,8 @@ public class Request {
     final static int UNIQUE_ID_LENGTH = 16;
     final static int KEY_LENGTH = 32;
     final static int MAX_VAL_LENGTH = 10000;
+    final static int COMMAND_LENGTH = 1;
+    final static int VAL_LEN_LENGTH = 2;
     private static Logger log = Logger.getLogger(Request.class.getName());
     RequestType reqType;
     ReplyType repType;
@@ -25,19 +27,30 @@ public class Request {
     int remotePort;
     private byte[] key = new byte[KEY_LENGTH];
 
-    public Request(ByteBuffer inBuf, InetAddress remoteIP, int remotePort) {
+    public Request(ByteBuffer inBuf, InetAddress remoteIP, int remotePort, int packetLength) {
         log.setLevel(Level.OFF);
 
         this.remoteIP = remoteIP;
         this.remotePort = remotePort;
 
+        if (packetLength < UNIQUE_ID_LENGTH + COMMAND_LENGTH) {
+            repType = ReplyType.INCOMPLETE_REQ;
+            return;
+        }
+
         inBuf.order(ByteOrder.LITTLE_ENDIAN);
         setUID(inBuf);
         setReqType(inBuf);
+
+        if ((reqType == RequestType.PUT || reqType == RequestType.GET || reqType == RequestType.REMOVE) && packetLength < UNIQUE_ID_LENGTH + COMMAND_LENGTH + KEY_LENGTH) {
+            repType = ReplyType.INVALID_KEY;
+            return;
+        }
+
         setKey(inBuf);
 
         if (reqType == RequestType.PUT) {
-            setPutParams(inBuf);
+            setPutParams(inBuf, packetLength);
         }
         log.info("CREATED request, UID: " + StringUtils.byteArrayToHexString(UID) + " command: " + reqType.getByteCode());
     }
@@ -69,10 +82,20 @@ public class Request {
         reqType = RequestType.getType(inBuf.get());
     }
 
-    private void setPutParams(ByteBuffer inBuf) {
-        length = inBuf.getShort();
-        if (length < 0 || length > MAX_VAL_LENGTH) return;
-        value = new byte[length];
+    private void setPutParams(ByteBuffer inBuf, int packetLength) {
+        if (packetLength < UNIQUE_ID_LENGTH + COMMAND_LENGTH + KEY_LENGTH + VAL_LEN_LENGTH) {
+            repType = ReplyType.BAD_VAL_LEN;
+            return;
+        }
+
+        this.length = inBuf.getShort();
+
+        if (this.length < 0 || this.length > MAX_VAL_LENGTH || packetLength < UNIQUE_ID_LENGTH + COMMAND_LENGTH + KEY_LENGTH + VAL_LEN_LENGTH + this.length) {
+            repType = ReplyType.BAD_VAL_LEN;
+            return;
+        }
+
+        value = new byte[this.length];
         inBuf.get(value);
     }
 
@@ -82,7 +105,7 @@ public class Request {
         REMOVE((byte) 0x03),
         SHUTDOWN((byte) 0x04),
         DELETE_ALL((byte) 0x05),
-        INVALID_REQ_CODE((byte) 0x06);
+        INVALID_REQ_CODE((byte) 0x06); // Undefined
 
         private byte index;
 
@@ -113,7 +136,9 @@ public class Request {
         STORE_FAIL((byte) 0x04),
         UNKNOWN_COM((byte) 0x05),
         BAD_VAL_LEN((byte) 0x06),
-        INVALID_REP_CODE((byte) 0x07);
+        INVALID_REP_CODE((byte) 0x07), // Undefined
+        MISSING_LEN((byte) 0x20),
+        INCOMPLETE_REQ((byte) 0x21);
 
         private byte index;
 

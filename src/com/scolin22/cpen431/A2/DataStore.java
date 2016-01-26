@@ -23,8 +23,6 @@ public class DataStore {
         if ((heapFreeSize / heapMaxSize) < 0.15 || ds.size() >= CAPACITY) {
             log.info("Exceeded heap limit Free: " + heapFreeSize + " Max: " + heapMaxSize);
             r.repType = Request.ReplyType.NO_SPACE;
-        } else if (r.length < 0 || r.length > Request.MAX_VAL_LENGTH) {
-            r.repType = Request.ReplyType.BAD_VAL_LEN;
         } else {
             ds.put(r.getKey(), r.value);
             r.repType = Request.ReplyType.OP_SUCCESS;

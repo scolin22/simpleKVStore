@@ -25,25 +25,27 @@ public class WorkerRunnable implements Runnable {
 
     @Override
     public void run() {
-        switch (r.reqType) {
-            case PUT:
-                ds.put(r);
-                break;
-            case GET:
-                ds.get(r);
-                break;
-            case REMOVE:
-                ds.remove(r);
-                break;
-            case SHUTDOWN:
-                r.repType = Request.ReplyType.OP_SUCCESS;
-                break;
-            case DELETE_ALL:
-                ds.delete_all(r);
-                break;
-            default:
-                r.repType = Request.ReplyType.UNKNOWN_COM;
-                break;
+        if (r.repType == null) {
+            switch (r.reqType) {
+                case PUT:
+                    ds.put(r);
+                    break;
+                case GET:
+                    ds.get(r);
+                    break;
+                case REMOVE:
+                    ds.remove(r);
+                    break;
+                case SHUTDOWN:
+                    r.repType = Request.ReplyType.OP_SUCCESS;
+                    break;
+                case DELETE_ALL:
+                    ds.delete_all(r);
+                    break;
+                default:
+                    r.repType = Request.ReplyType.UNKNOWN_COM;
+                    break;
+            }
         }
         log.info("REPLIED request, UID: " + StringUtils.byteArrayToHexString(r.UID) + " command: " + r.reqType.getByteCode());
         al.sendReply(r);
